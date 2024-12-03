@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ElWa App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            text-align: center;
+        }
+        .container {
+            margin: 50px auto;
+            max-width: 400px;
+        }
+        h1 {
+            font-size: 24px;
+        }
+        button, select {
+            margin: 10px;
+            padding: 10px;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+        }
+        select {
+            width: 80%;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .hidden {
+            display: none;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>ElWa App</h1>
+    <p>Выберите категорию:</p>
+    <button id="electricity">Электричество</button>
+    <button id="water">Вода</button>
+
+    <div id="electricity-options" class="hidden">
+        <p>Выберите район:</p>
+        <select id="electricity-area">
+            <option value="">-- Выберите район --</option>
+            <option value="Барајево">Барајево</option>
+            <option value="Вождовац">Вождовац</option>
+            <option value="Врачар">Врачар</option>
+            <option value="Гроцка">Гроцка</option>
+            <option value="Звездара">Звездара</option>
+            <option value="Земун">Земун</option>
+            <option value="Лазаревац">Лазаревац</option>
+            <option value="Младеновац">Младеновац</option>
+            <option value="Нови Београд">Нови Београд</option>
+            <option value="Обреновац">Обреновац</option>
+            <option value="Палилула">Палилула</option>
+            <option value="Раковица">Раковица</option>
+            <option value="Савски Венац">Савски Венац</option>
+            <option value="Сопот">Сопот</option>
+            <option value="Стари Град">Стари Град</option>
+            <option value="Сурчин">Сурчин</option>
+            <option value="Чукарица">Чукарица</option>
+        </select>
+        <p>Выберите день:</p>
+        <button id="today">Сегодня</button>
+        <button id="tomorrow">Завтра</button>
+        <button id="day-after-tomorrow">Послезавтра</button>
+    </div>
+
+    <div id="water-options" class="hidden">
+        <p>Выберите район:</p>
+        <select id="water-area">
+            <option value="">-- Выберите район --</option>
+            <option value="Барајево">Барајево</option>
+            <option value="Вождовац">Вождовац</option>
+            <option value="Врачар">Врачар</option>
+            <option value="Гроцка">Гроцка</option>
+            <option value="Звездара">Звездара</option>
+            <option value="Земун">Земун</option>
+            <option value="Лазаревац">Лазаревац</option>
+            <option value="Младеновац">Младеновац</option>
+            <option value="Нови Београд">Нови Београд</option>
+            <option value="Обреновац">Обреновац</option>
+            <option value="Палилула">Палилула</option>
+            <option value="Раковица">Раковица</option>
+            <option value="Савски венац">Савски венац</option>
+            <option value="Сопот">Сопот</option>
+            <option value="Стари град">Стари град</option>
+            <option value="Сурчин">Сурчин</option>
+            <option value="Чукарица">Чукарица</option>
+        </select>
+        <button id="check-water">Проверить</button>
+    </div>
+
+    <div id="result" class="result"></div>
+</div>
+<script>
+    const resultDiv = document.getElementById('result');
+    const electricityOptions = document.getElementById('electricity-options');
+    const waterOptions = document.getElementById('water-options');
+
+    // Обработка кнопки "Электричество"
+    document.getElementById('electricity').addEventListener('click', () => {
+        electricityOptions.classList.remove('hidden');
+        waterOptions.classList.add('hidden');
+    });
+
+    // Обработка кнопок для выбора дня
+    document.getElementById('today').addEventListener('click', () => handleElectricityRequest('check_today'));
+    document.getElementById('tomorrow').addEventListener('click', () => handleElectricityRequest('check_tomorrow'));
+    document.getElementById('day-after-tomorrow').addEventListener('click', () => handleElectricityRequest('check_day_after_tomorrow'));
+
+    async function handleElectricityRequest(day) {
+        const area = document.getElementById('electricity-area').value;
+
+        if (!area) {
+            resultDiv.innerText = 'Пожалуйста, выберите район!';
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/electricity', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ area, day })
+            });
+            const data = await response.json();
+            resultDiv.innerText = data.message;
+        } catch (error) {
+            resultDiv.innerText = 'Ошибка при получении данных.';
+            console.error(error);
+        }
+    }
+
+    // Обработка кнопки "Вода"
+    document.getElementById('water').addEventListener('click', () => {
+        waterOptions.classList.remove('hidden');
+        electricityOptions.classList.add('hidden');
+    });
+
+    document.getElementById('check-water').addEventListener('click', async () => {
+        const area = document.getElementById('water-area').value;
+
+        if (!area) {
+            resultDiv.innerText = 'Пожалуйста, выберите район!';
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/water', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ area })
+            });
+            const data = await response.json();
+            resultDiv.innerText = data.message;
+        } catch (error) {
+            resultDiv.innerText = 'Ошибка при получении данных.';
+            console.error(error);
+        }
+    });
+</script>
+</body>
+</html>

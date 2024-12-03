@@ -1,0 +1,24 @@
+{
+  "name": "telegram-web-app",
+  "version": "1.0.0",
+  "description": "A Telegram Web App for checking electricity and water outages.",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "private": true,
+  "dependencies": {
+    "express": "^4.21.1",
+    "node-telegram-bot-api": "^0.66.0",
+    "puppeteer": "^23.9.0",
+    "selenium-webdriver": "^4.27.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "keywords": ["telegram", "web-app", "electricity", "water"],
+  "author": "Your Name",
+  "license": "ISC"
+}
